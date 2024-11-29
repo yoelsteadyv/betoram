@@ -9,13 +9,13 @@ import router from "./routes/index.js"
 dotenv.config()
 const app = express()
 
-try {
-  await db.authenticate()
-  console.log('database connected...')
-  // await Users.sync() //berhubungan sama import Users diatas
-} catch (error) {
-  console.error(error)
-}
+// try {
+//   await db.authenticate()
+//   console.log('database connected...')
+//   // await Users.sync() //berhubungan sama import Users diatas
+// } catch (error) {
+//   console.error(error)
+// }
 
 app.get('/', (req, res) => {
   res.status(200).json({
@@ -26,5 +26,16 @@ app.use(cors('*'))
 app.use(cookieParser())
 app.use(express.json())
 app.use(router)
+
+db.authenticate()
+  .then(() => {
+    console.log('database connected..');
+    return db.sync()
+  })
+  .then(() => {
+    console.log('database sync');
+
+  })
+  .catch(err => console.log(`error` + err))
 
 app.listen(3001, () => console.log('server running at port 3001'))
