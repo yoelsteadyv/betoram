@@ -22,7 +22,9 @@ app.get('/', (req, res) => {
     msg: 'anjay'
   })
 })
-app.use(cors('*'))
+
+app.options("*", cors());
+app.use(cors({ origin: "*", credentials: true }));
 app.use(cookieParser())
 app.use(express.json())
 app.use(router)
