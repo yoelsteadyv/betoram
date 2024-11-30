@@ -10,7 +10,7 @@ const app = express();
 
 // Middleware CORS
 app.use(cors({
-  origin: "*",
+  origin: "https://fetoram.vercel.app",
   credentials: true
 }));
 app.options("*", cors());
