@@ -1,19 +1,30 @@
 import express from "express";
 import db from "./config/database.js";
 import cookieParser from "cookie-parser";
-import cors from "cors";
 import dotenv from "dotenv";
 import router from "./routes/index.js";
 
 dotenv.config();
 const app = express();
 
-// Middleware CORS
-app.use(cors({
-  origin: "https://fetoram.vercel.app",
-  credentials: true
-}));
-app.options("*", cors());
+// Middleware untuk menangani CORS secara manual
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  res.setHeader("Access-Control-Allow-Origin", "https://fetoram.vercel.app"); // Ganti dengan domain frontend-mu
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,POST,PUT,DELETE,OPTIONS,PATCH"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, X-Requested-With, X-CSRF-Token"
+  );
+  if (req.method === "OPTIONS") {
+    res.sendStatus(200); // Mengakhiri preflight request
+    return;
+  }
+  next();
+});
 
 // Middleware lainnya
 app.use(cookieParser());
@@ -21,7 +32,7 @@ app.use(express.json());
 
 // Rute tes
 app.get("/", (req, res) => {
-  res.status(200).json({ msg: "anjay" });
+  res.status(200).json({ msg: "Server berjalan dengan baik!" });
 });
 
 // Rute utama
@@ -38,5 +49,6 @@ db.authenticate()
   })
   .catch((err) => console.log("Error: " + err));
 
-// Jalankan server
-app.listen(3001, () => console.log("Server running at port 3001"));
+// Menangani deployment di Vercel
+const handler = app; // Handler ini digunakan untuk Vercel
+export default handler; // Penting untuk Vercel agar mengenali server Express
