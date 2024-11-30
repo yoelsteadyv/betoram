@@ -7,10 +7,10 @@ import router from "./routes/index.js";
 dotenv.config();
 const app = express();
 
-// Middleware untuk menangani CORS secara manual
 app.use((req, res, next) => {
+  console.log("CORS Middleware executed for", req.method, req.path); // Debug
   res.setHeader("Access-Control-Allow-Credentials", true);
-  res.setHeader("Access-Control-Allow-Origin", "https://fetoram.vercel.app"); // Ganti dengan domain frontend-mu
+  res.setHeader("Access-Control-Allow-Origin", "https://fetoram.vercel.app");
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET,POST,PUT,DELETE,OPTIONS,PATCH"
@@ -20,11 +20,12 @@ app.use((req, res, next) => {
     "Content-Type, Authorization, X-Requested-With, X-CSRF-Token"
   );
   if (req.method === "OPTIONS") {
-    res.sendStatus(200); // Mengakhiri preflight request
+    res.sendStatus(200); // Preflight request selesai
     return;
   }
   next();
 });
+
 
 // Middleware lainnya
 app.use(cookieParser());
@@ -34,6 +35,8 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.status(200).json({ msg: "Server berjalan dengan baik!" });
 });
+
+app.use(express.json)
 
 // Rute utama
 app.use(router);
